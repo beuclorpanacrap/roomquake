@@ -1,0 +1,438 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="theme-color" content="#eeeee7" />
+    <title>RoomQuake — The room is an instrument.</title>
+    <link rel="icon" href="/icon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="/style.css" />
+  </head>
+  <body>
+    <header>
+      <a class="brand" href="/" aria-label="RoomQuake home"
+        ><svg viewBox="0 0 32 32" aria-hidden="true">
+          <path d="M2 16h6l3-10 5 21 5-17 3 6h6" /></svg
+        ><b>RoomQuake<span>COLLECTIVE SENSING LAB</span></b></a
+      >
+      <div class="header-right">
+        <span class="edition">EXPERIMENT NO. 001</span
+        ><span id="connection" class="badge">Connecting…</span>
+      </div>
+    </header>
+    <main>
+      <div id="notice" role="status" aria-live="polite"></div>
+      <section id="landing">
+        <div class="hero">
+          <div>
+            <div class="eyebrow">SMALL VIBRATIONS. SHARED DISCOVERIES.</div>
+            <h1>The room is<br />an <em>instrument.</em></h1>
+            <p class="lead">
+              A few phones. One shared surface.<br />See the vibrations you
+              usually only feel.
+            </p>
+            <nav class="role-shortcuts" aria-label="Choose a role">
+              <a href="#host-entry">Host an experiment ↗</a
+              ><a href="#sensor-entry">Join with a phone →</a>
+            </nav>
+            <div class="hero-caption">
+              <span class="cross">+</span> A live, local-first experiment in
+              collective sensing.
+            </div>
+          </div>
+          <div
+            class="hero-instrument"
+            aria-label="Illustration of four sensors observing one impact"
+          >
+            <div class="instrument-heading">
+              <span>ARRAY / 04 NODES</span><span>ILLUSTRATION</span>
+            </div>
+            <svg
+              viewBox="0 0 480 280"
+              role="img"
+              aria-label="An impact radiates between four phone positions"
+            >
+              <defs>
+                <pattern
+                  id="grid"
+                  width="32"
+                  height="32"
+                  patternUnits="userSpaceOnUse"
+                >
+                  <path
+                    d="M32 0H0V32"
+                    fill="none"
+                    stroke="#34453e"
+                    stroke-width=".6"
+                  />
+                </pattern>
+              </defs>
+              <rect width="480" height="280" fill="url(#grid)" />
+              <g fill="none" stroke="#77977e">
+                <circle cx="240" cy="140" r="45" />
+                <circle cx="240" cy="140" r="86" stroke-dasharray="3 5" />
+                <circle cx="240" cy="140" r="128" opacity=".35" />
+              </g>
+              <path
+                d="M0 140h170l12-8 9 16 12-9 12 2 13-43 12 91 14-68 13 21h213"
+                stroke="#d3ed91"
+                stroke-width="2"
+                fill="none"
+              />
+              <g fill="#d3ed91">
+                <circle cx="112" cy="64" r="7" />
+                <circle cx="368" cy="64" r="7" />
+                <circle cx="112" cy="224" r="7" />
+                <circle cx="368" cy="224" r="7" />
+              </g>
+              <g fill="#dce4d8" font-family="monospace" font-size="10">
+                <text x="126" y="68">S01</text>
+                <text x="382" y="68">S02</text>
+                <text x="126" y="228">S03</text>
+                <text x="382" y="228">S04</text>
+              </g>
+            </svg>
+            <div class="instrument-footer">
+              <span>ONE IMPACT. MULTIPLE PERSPECTIVES.</span><span>m/s²</span>
+            </div>
+          </div>
+        </div>
+        <div class="role-heading">
+          <span class="eyebrow">01 / CHOOSE YOUR ROLE</span
+          ><span>Start with a computer. Add phones when you’re ready.</span>
+        </div>
+        <div class="roles">
+          <section id="host-entry" class="role-card host-role">
+            <div class="role-number">A / CONTROL DESK</div>
+            <h2>Host the experiment</h2>
+            <p>
+              Open the live dashboard on this computer. Invite nearby phones or
+              try a complete virtual array.
+            </p>
+            <ol class="steps">
+              <li><span>1</span>Create an ephemeral room</li>
+              <li><span>2</span>Share its code with nearby phones</li>
+              <li><span>3</span>Tap a surface. Watch the traces align.</li>
+            </ol>
+            <div class="role-actions">
+              <button id="create">Create a room <span>↗</span></button
+              ><span>No account.<br />No installation.</span>
+            </div>
+          </section>
+          <section id="sensor-entry" class="role-card joinbox">
+            <div class="role-number">B / MOBILE SENSOR</div>
+            <h2>Bring your phone</h2>
+            <p>
+              Already have a host? Join its room, choose your position, then
+              explicitly enable motion.
+            </p>
+            <div class="join-fields">
+              <label
+                >Room code<input
+                  id="code"
+                  maxlength="6"
+                  placeholder="ABC123"
+                  autocomplete="off"
+                  autocapitalize="characters"
+                  spellcheck="false" /></label
+              ><label
+                >Sensor name <span>optional</span
+                ><input
+                  id="name"
+                  maxlength="32"
+                  placeholder="e.g. Window-side phone"
+              /></label>
+            </div>
+            <button id="join" class="secondary">
+              Join as a sensor <span>→</span>
+            </button>
+            <div class="consent-note">
+              ◎ Motion is off until you enable it. Nothing is recorded to disk.
+            </div>
+          </section>
+        </div>
+        <details class="preflight" open>
+          <summary>Before you begin <span>PRE-FLIGHT CHECKLIST</span></summary>
+          <div class="checklist">
+            <p>
+              <b>01 / Same network</b>Connect the host and phones to trusted
+              Wi-Fi. Real phones need a trusted HTTPS connection.
+            </p>
+            <p>
+              <b>02 / Shared surface</b>Place phones flat on one sturdy surface.
+              Space them apart and note their grid positions.
+            </p>
+            <p>
+              <b>03 / Gentle input</b>Use light taps or nearby footsteps. Keep
+              phone pages visible. Never strike a device.
+            </p>
+          </div>
+        </details>
+      </section>
+      <section id="phone" hidden class="phone">
+        <div class="phone-banner">
+          <span class="eyebrow">MOBILE SENSOR / SETUP</span>
+          <h1 id="phoneTitle">Ready to sense</h1>
+          <p>
+            You’re part of the array. Finish these two steps to contribute a
+            signal.
+          </p>
+        </div>
+        <div class="phone-step">
+          <span class="step-number">01</span>
+          <div>
+            <h3>Place your phone</h3>
+            <p>
+              Set it flat on the shared surface. Pick its approximate position:
+              row 1 is the top of the host’s map.
+            </p>
+            <div class="positions">
+              <label
+                >Column<select id="posX">
+                  <option>1</option>
+                  <option>2</option>
+                  <option selected>3</option>
+                  <option>4</option>
+                  <option>5</option>
+                </select></label
+              ><label
+                >Row<select id="posY">
+                  <option>1</option>
+                  <option>2</option>
+                  <option selected>3</option>
+                  <option>4</option>
+                  <option>5</option>
+                </select></label
+              >
+            </div>
+          </div>
+        </div>
+        <div class="phone-step">
+          <span class="step-number">02</span>
+          <div>
+            <h3>Enable motion, when ready</h3>
+            <p id="permission">
+              Your browser may ask for motion access. Only acceleration
+              magnitude is shared with this room. No microphone, location, or
+              background collection.
+            </p>
+            <div class="phone-actions">
+              <button id="enable">Enable motion →</button
+              ><button id="stop" class="secondary" disabled>
+                Stop sensing
+              </button>
+            </div>
+            <div id="sensorStatus" class="statusline" role="status">
+              ○ Motion is off · waiting for your consent
+            </div>
+            <p class="muted">
+              Keep this page visible. Hiding it or losing the connection stops
+              collection; enable it again to resume.
+            </p>
+          </div>
+        </div>
+      </section>
+      <div id="dashboard" hidden>
+        <section class="roomline">
+          <div>
+            <div class="eyebrow">CONTROL DESK / LIVE EXPERIMENT</div>
+            <h1>
+              Room <span id="roomCode">—</span
+              ><span class="room-marker">●</span>
+            </h1>
+            <p>Your shared surface, seen through multiple sensors.</p>
+          </div>
+          <div class="joinlink">
+            <button id="copy">Copy phone join link ↗</button
+            ><small id="joinHint"
+              >Open this address on phones using trusted HTTPS.</small
+            ><a class="demo-shortcut" href="#experiment-controls"
+              >No phones? Try the virtual array ↓</a
+            >
+          </div>
+        </section>
+        <section class="healthbar" aria-label="Measured system health">
+          <div>
+            <span class="health-label">PIPELINE / P95</span
+            ><strong id="processing">Waiting</strong
+            ><small>Measured server processing</small>
+          </div>
+          <div>
+            <span class="health-label">NETWORK / EST.</span
+            ><strong id="network">Calibrating</strong
+            ><small>½ host round-trip · not end-to-end</small>
+          </div>
+          <div>
+            <span class="health-label">CLOCK / UNCERTAINTY</span
+            ><strong id="syncQuality">—</strong
+            ><small>Worst real sensor estimate</small>
+          </div>
+          <label class="mode-label"
+            >Display & telemetry<select id="mode">
+              <option value="performance">
+                High performance · 10 ms target
+              </option>
+              <option value="eco">
+                Lower power · 100 ms telemetry
+              </option></select
+            ><small>Paint at next frame · 60 Hz ≈ 16.7 ms</small></label
+          >
+        </section>
+        <div class="lab-grid">
+          <section class="card mapcard">
+            <div class="cardhead">
+              <div>
+                <span class="eyebrow">01 / SPATIAL OBSERVATION</span>
+                <h2>Sensor array</h2>
+              </div>
+              <span class="badge" id="arrayHealth">AWAITING SENSORS</span>
+            </div>
+            <div class="array-summary">
+              <strong id="count">00</strong>
+              <div>
+                <b>connected sensors</b
+                ><small id="realCount">Waiting for your array</small>
+              </div>
+              <span>5 × 5<br />POSITION GRID</span>
+            </div>
+            <div class="map-wrap">
+              <div class="axis">
+                <span>1</span><span>2</span><span>3</span><span>4</span
+                ><span>5</span>
+              </div>
+              <div id="map" class="map">
+                <div class="map-empty">
+                  Place your first sensor<br /><span
+                    >or start the virtual array below</span
+                  >
+                </div>
+              </div>
+              <div class="mapkey">
+                <span>QUIET <i></i> IMPACT</span><span>Relative intensity</span>
+              </div>
+            </div>
+            <p class="muted">
+              Onset labels are relative timestamps. This map does not locate a
+              wave source.
+            </p>
+          </section>
+          <section class="card traces">
+            <div class="cardhead">
+              <div>
+                <span class="eyebrow">02 / COMMON TIMEBASE</span>
+                <h2>Live waveforms</h2>
+              </div>
+              <span class="live">● STREAMING</span>
+            </div>
+            <div class="trace-scale">
+              <span>DE-TRENDED ACCELERATION</span
+              ><span>±1.5 m/s² · 3 SEC WINDOW</span>
+            </div>
+            <div id="devices">
+              <div class="empty">
+                <span class="empty-symbol">∿</span
+                ><b>A quiet room is a good start.</b>
+                <p>
+                  Join a phone and enable motion,<br />or start four virtual
+                  sensors below.
+                </p>
+              </div>
+            </div>
+            <div class="trace-footer">
+              <span>−3 s</span><span>−2 s</span><span>−1 s</span
+              ><span>NOW</span>
+            </div>
+          </section>
+          <section id="experiment-controls" class="card controls">
+            <div class="cardhead">
+              <div>
+                <span class="eyebrow">03 / EXPERIMENT BENCH</span>
+                <h2>Introduce a signal</h2>
+              </div>
+              <span class="bench-mark">⌁</span>
+            </div>
+            <div class="controlrow">
+              <div>
+                <b>Virtual array</b>
+                <p>Four reproducible sensors. No phones required.</p>
+              </div>
+              <button id="simulate">Start simulation</button>
+            </div>
+            <button id="impact" class="impact-button" disabled>
+              <span>＋</span> Send an impact <small>IMMEDIATE INPUT</small>
+            </button>
+            <details class="tuning">
+              <summary>
+                Detection settings <span>ADJUST SENSITIVITY</span>
+              </summary>
+              <div class="sliders">
+                <label
+                  >Trigger threshold
+                  <output id="thresholdValue">5× noise</output
+                  ><input
+                    id="threshold"
+                    type="range"
+                    min="2"
+                    max="12"
+                    value="5" /></label
+                ><label
+                  >Shared event window <output id="windowValue">180 ms</output
+                  ><input
+                    id="windowMs"
+                    type="range"
+                    min="50"
+                    max="500"
+                    step="10"
+                    value="180"
+                /></label>
+              </div>
+              <p class="muted">
+                At least two sensors must trigger in the selected window. Higher
+                thresholds reject more noise.
+              </p>
+            </details>
+          </section>
+          <section class="card timeline">
+            <div class="cardhead">
+              <div>
+                <span class="eyebrow">04 / COINCIDENT SIGNALS</span>
+                <h2>Shared events <span id="eventCount">00</span></h2>
+              </div>
+              <span class="badge">LATEST 40</span>
+            </div>
+            <div id="events" class="events">
+              <div class="empty">
+                <b>Listening for a shared moment.</b>
+                <p>
+                  One sensor is a movement.<br />Two together may be a shared
+                  impact.
+                </p>
+              </div>
+            </div>
+          </section>
+        </div>
+        <div class="method-note">
+          <b>READ THE SIGNAL, NOT A PREDICTION.</b
+          ><span
+            >Magnitude → 300 ms detrend → rolling noise → threshold →
+            multi-sensor coincidence. Browser and network timing vary; no hard
+            10 ms end-to-end guarantee.</span
+          >
+        </div>
+      </div>
+      <aside class="safety">
+        <span>EDUCATIONAL PROTOTYPE</span>
+        <p>
+          Not an earthquake-warning or structural-safety instrument. Session
+          data stays in memory and is visible to room participants.
+        </p>
+        <b>NO ACCOUNTS · NO RAW DATA SAVED</b>
+      </aside>
+      <footer>
+        <span>RQ / FIELD LAB SERIES — 001</span
+        ><span>Small signals. Shared curiosity.</span>
+      </footer>
+    </main>
+    <script type="module" src="/app.js"></script>
+  </body>
+</html>
