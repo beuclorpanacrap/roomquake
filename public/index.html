@@ -13,7 +13,7 @@
       <a class="brand" href="/" aria-label="RoomQuake home"
         ><svg viewBox="0 0 32 32" aria-hidden="true">
           <path d="M2 16h6l3-10 5 21 5-17 3 6h6" /></svg
-        ><b>RoomQuake<span>COLLECTIVE SENSING LAB</span></b></a
+        ><b>RoomQuake<span>COLLECTIVE SENSING LAB &amp; INSTRUMENT</span></b></a
       >
       <div class="header-right">
         <span class="edition">EXPERIMENT NO. 001</span
@@ -28,16 +28,16 @@
             <div class="eyebrow">SMALL VIBRATIONS. SHARED DISCOVERIES.</div>
             <h1>The room is<br />an <em>instrument.</em></h1>
             <p class="lead">
-              A few phones. One shared surface.<br />See the vibrations you
-              usually only feel.
+              A few phones. One shared surface.<br />See and play the
+              vibrations you usually only feel.
             </p>
             <nav class="role-shortcuts" aria-label="Choose a role">
-              <a href="#host-entry">Host an experiment ↗</a
+              <a href="#host-entry">Host stage &amp; lab ↗</a
               ><a href="#sensor-entry">Join with a phone →</a>
             </nav>
             <div class="hero-caption">
-              <span class="cross">+</span> A live, local-first experiment in
-              collective sensing.
+              <span class="cross">+</span> A live, local-first multi-phone
+              seismometer &amp; tabletop instrument.
             </div>
           </div>
           <div
@@ -99,20 +99,20 @@
         </div>
         <div class="role-heading">
           <span class="eyebrow">01 / CHOOSE YOUR ROLE</span
-          ><span>Start with a computer. Add phones when you’re ready.</span>
+          ><span>Open the projector/lab on a laptop. Scan QR on phones.</span>
         </div>
         <div class="roles">
           <section id="host-entry" class="role-card host-role">
-            <div class="role-number">A / CONTROL DESK</div>
+            <div class="role-number">A / CONTROL DESK &amp; STAGE</div>
             <h2>Host the experiment</h2>
             <p>
-              Open the live dashboard on this computer. Invite nearby phones or
-              try a complete virtual array.
+              Launch the projector wavefield, audio resonator, and seismometer
+              lab on this laptop. Invite nearby phones via QR.
             </p>
             <ol class="steps">
               <li><span>1</span>Create an ephemeral room</li>
-              <li><span>2</span>Share its code with nearby phones</li>
-              <li><span>3</span>Tap a surface. Watch the traces align.</li>
+              <li><span>2</span>Scan the QR code with phones</li>
+              <li><span>3</span>Lay phones flat. Tap the table to play.</li>
             </ol>
             <div class="role-actions">
               <button id="create">Create a room <span>↗</span></button
@@ -123,8 +123,8 @@
             <div class="role-number">B / MOBILE SENSOR</div>
             <h2>Bring your phone</h2>
             <p>
-              Already have a host? Join its room, choose your position, then
-              explicitly enable motion.
+              Already have a host? Confirm the room code, tap Join &amp; Enable
+              Motion, then lay your phone flat on the table.
             </p>
             <div class="join-fields">
               <label
@@ -140,14 +140,15 @@
                 ><input
                   id="name"
                   maxlength="32"
-                  placeholder="e.g. Window-side phone"
+                  placeholder="e.g. Left corner"
               /></label>
             </div>
             <button id="join" class="secondary">
-              Join as a sensor <span>→</span>
+              Join &amp; Enable Motion <span>→</span>
             </button>
             <div class="consent-note">
-              ◎ Motion is off until you enable it. Nothing is recorded to disk.
+              ◎ Motion starts only after your permission tap. No placement grid
+              needed; microphone is separate &amp; optional.
             </div>
           </section>
         </div>
@@ -155,67 +156,44 @@
           <summary>Before you begin <span>PRE-FLIGHT CHECKLIST</span></summary>
           <div class="checklist">
             <p>
-              <b>01 / Same network</b>Connect the host and phones to trusted
-              Wi-Fi. Real phones need a trusted HTTPS connection.
+              <b>01 / Trusted HTTPS</b>Connect host and phones to the same
+              trusted Wi-Fi using local trusted HTTPS (`mkcert`) or a tunnel fallback.
             </p>
             <p>
-              <b>02 / Shared surface</b>Place phones flat on one sturdy surface.
-              Space them apart and note their grid positions.
+              <b>02 / Lay phones flat</b>Place each phone flat on one rigid
+              tabletop. Wait ~1 s for automatic calibration until Ready turns green.
             </p>
             <p>
-              <b>03 / Gentle input</b>Use light taps or nearby footsteps. Keep
-              phone pages visible. Never strike a device.
+              <b>03 / Gentle taps</b>Tap the table surface gently. Keep phone
+              screens visible. Single-phone bumps stay silent.
             </p>
           </div>
         </details>
       </section>
       <section id="phone" hidden class="phone">
         <div class="phone-banner">
-          <span class="eyebrow">MOBILE SENSOR / SETUP</span>
-          <h1 id="phoneTitle">Ready to sense</h1>
+          <span class="eyebrow">MOBILE SENSOR / LIVE STATUS</span>
+          <h1 id="phoneTitle">Sensor connected</h1>
           <p>
-            You’re part of the array. Finish these two steps to contribute a
-            signal.
+            No manual coordinates needed. Lay your phone flat on the shared
+            tabletop and keep this screen open.
           </p>
         </div>
-        <div class="phone-step">
-          <span class="step-number">01</span>
+        <div class="phone-step phone-state-card" id="phoneStateCard" data-state="place_flat">
+          <span class="step-number" id="phoneStepIcon">01</span>
           <div>
-            <h3>Place your phone</h3>
-            <p>
-              Set it flat on the shared surface. Pick its approximate position:
-              row 1 is the top of the host’s map.
-            </p>
-            <div class="positions">
-              <label
-                >Column<select id="posX">
-                  <option>1</option>
-                  <option>2</option>
-                  <option selected>3</option>
-                  <option>4</option>
-                  <option>5</option>
-                </select></label
-              ><label
-                >Row<select id="posY">
-                  <option>1</option>
-                  <option>2</option>
-                  <option selected>3</option>
-                  <option>4</option>
-                  <option>5</option>
-                </select></label
-              >
+            <div class="phone-state-head">
+              <span class="badge" id="phonePhaseBadge">PLACE FLAT</span>
+              <span class="muted" id="phoneTiltInfo">Tilt: —°</span>
             </div>
-          </div>
-        </div>
-        <div class="phone-step">
-          <span class="step-number">02</span>
-          <div>
-            <h3>Enable motion, when ready</h3>
+            <h3 id="phonePhaseTitle">Place phone flat on the table</h3>
             <p id="permission">
-              Your browser may ask for motion access. Only acceleration
-              magnitude is shared with this room. No microphone, location, or
-              background collection.
+              Only acceleration magnitude is shared with this room. Triggers
+              stay gated until the phone rests flat and still.
             </p>
+            <div class="cal-progress-track" aria-hidden="true">
+              <div id="phoneCalProgress" class="cal-progress-fill" style="width:0%"></div>
+            </div>
             <div class="phone-actions">
               <button id="enable">Enable motion →</button
               ><button id="stop" class="secondary" disabled>
@@ -226,11 +204,31 @@
               ○ Motion is off · waiting for your consent
             </div>
             <p class="muted">
-              Keep this page visible. Hiding it or losing the connection stops
-              collection; enable it again to resume.
+              Keep this page visible. Picking the phone up pauses triggers and
+              automatically recalibrates when set flat again.
             </p>
           </div>
         </div>
+        <details class="phone-step phone-optional">
+          <summary>
+            <span>Optional experiment: Microphone &amp; acoustic ranging</span>
+            <small id="micBadge">OFF</small>
+          </summary>
+          <div class="phone-optional-body">
+            <p class="muted">
+              Not required to join or play. Enabling microphone lets this phone
+              measure pairwise calibration chirps locally (no room audio is streamed).
+            </p>
+            <div class="phone-actions">
+              <button id="toggleMic" class="secondary">
+                Enable optional microphone
+              </button>
+            </div>
+            <div id="micStatus" class="statusline">
+              ○ Microphone off · motion-only mode active
+            </div>
+          </div>
+        </details>
       </section>
       <div id="dashboard" hidden>
         <section class="roomline">
@@ -240,17 +238,90 @@
               Room <span id="roomCode">—</span
               ><span class="room-marker">●</span>
             </h1>
-            <p>Your shared surface, seen through multiple sensors.</p>
+            <p>Your shared surface, seen and played through multiple sensors.</p>
           </div>
           <div class="joinlink">
-            <button id="copy">Copy phone join link ↗</button
-            ><small id="joinHint"
+            <div class="roomline-actions">
+              <button id="openProjector">Projector Stage ↗</button>
+              <button id="copy" class="secondary">Copy join link</button>
+            </div>
+            <small id="joinHint"
               >Open this address on phones using trusted HTTPS.</small
             ><a class="demo-shortcut" href="#experiment-controls"
               >No phones? Try the virtual array ↓</a
             >
           </div>
         </section>
+
+        <section class="card stage-toolbar" aria-label="Instrument and stage controls">
+          <div class="toolbar-row">
+            <div class="toolbar-group">
+              <span class="health-label">AUDIO ENGINE</span>
+              <div class="toolbar-inline">
+                <button id="unlockAudio">Enable Audio</button>
+                <span id="audioStateBadge" class="badge">AUDIO LOCKED</span>
+              </div>
+            </div>
+            <label class="toolbar-group"
+              ><span class="health-label">DETECTOR PROFILE</span>
+              <select id="profile">
+                <option value="lab">Lab · 650 ms refractory (180 ms win)</option>
+                <option value="performance">
+                  Performance · Rhythm 140 ms (110 ms win)
+                </option>
+              </select></label
+            >
+            <label class="toolbar-group"
+              ><span class="health-label">INSTRUMENT MODE</span>
+              <select id="instrumentMode">
+                <option value="free">Free Play · Resonator</option>
+                <option value="assist">Play Assist · Orchestral Cue</option>
+              </select></label
+            >
+            <label class="toolbar-group" id="freeVoiceWrap"
+              ><span class="health-label">RESONATOR VOICE</span>
+              <select id="freeVoice">
+                <option value="strings">Soft Strings</option>
+                <option value="bells">Glassy Bells</option>
+                <option value="harp">Resonant Harp</option>
+              </select></label
+            >
+            <div class="toolbar-group toolbar-check">
+              <span class="health-label">SAFETY GATE</span>
+              <label class="checkbox-label"
+                ><input type="checkbox" id="auditionSim" />
+                <span>Audition simulation audio</span></label
+              >
+            </div>
+          </div>
+
+          <div id="assistBar" class="assist-bar" hidden>
+            <div class="assist-meta">
+              <span class="eyebrow" id="assistSection">I. EMBER</span>
+              <b id="assistTitle">Ashen Cathedral (Original Cue)</b>
+              <span id="assistLabel" class="muted">Tap table to cue Step 1</span>
+            </div>
+            <div class="assist-progress-wrap">
+              <div class="assist-progress-track">
+                <div id="assistProgressFill" class="assist-progress-fill" style="width:0%"></div>
+              </div>
+              <span id="assistCount" class="mono-stat">00 / 28</span>
+            </div>
+            <div class="assist-actions">
+              <button id="assistBack" class="secondary">← Step</button>
+              <button id="assistReset" class="secondary">Reset Cue</button>
+              <label class="file-pill"
+                ><span>Import MIDI</span>
+                <input id="midiFile" type="file" accept=".mid,.midi" hidden
+              /></label>
+              <select id="midiTrack" hidden aria-label="MIDI track"></select>
+              <button id="useBuiltinCue" class="secondary" hidden>
+                Ashen Cathedral
+              </button>
+            </div>
+          </div>
+        </section>
+
         <section class="healthbar" aria-label="Measured system health">
           <div>
             <span class="health-label">PIPELINE / P95</span
@@ -268,21 +339,21 @@
             ><small>Worst real sensor estimate</small>
           </div>
           <label class="mode-label"
-            >Display & telemetry<select id="mode">
+            >Display &amp; telemetry<select id="mode">
               <option value="performance">
                 High performance · 10 ms target
               </option>
               <option value="eco">
-                Lower power · 100 ms telemetry
+                Lower power · 100 ms telemetry &amp; eco graphics
               </option></select
-            ><small>Paint at next frame · 60 Hz ≈ 16.7 ms</small></label
+            ><small>Tap-to-sound measured externally via audio</small></label
           >
         </section>
         <div class="lab-grid">
           <section class="card mapcard">
             <div class="cardhead">
               <div>
-                <span class="eyebrow">01 / SPATIAL OBSERVATION</span>
+                <span class="eyebrow">01 / ARRAY TOPOLOGY &amp; QR</span>
                 <h2>Sensor array</h2>
               </div>
               <span class="badge" id="arrayHealth">AWAITING SENSORS</span>
@@ -293,27 +364,34 @@
                 <b>connected sensors</b
                 ><small id="realCount">Waiting for your array</small>
               </div>
-              <span>5 × 5<br />POSITION GRID</span>
+              <span id="layoutModeLabel">SCHEMATIC<br />LAYOUT</span>
             </div>
-            <div class="map-wrap">
-              <div class="axis">
-                <span>1</span><span>2</span><span>3</span><span>4</span
-                ><span>5</span>
-              </div>
-              <div id="map" class="map">
-                <div class="map-empty">
-                  Place your first sensor<br /><span
-                    >or start the virtual array below</span
-                  >
+            <div class="map-qr-row">
+              <div class="map-wrap">
+                <div id="map" class="map">
+                  <div class="map-empty">
+                    Scan QR on phones to join<br /><span
+                      >or start the virtual array below</span
+                    >
+                  </div>
+                </div>
+                <div class="mapkey">
+                  <span>QUIET <i></i> IMPACT</span><span>Relative intensity</span>
                 </div>
               </div>
-              <div class="mapkey">
-                <span>QUIET <i></i> IMPACT</span><span>Relative intensity</span>
+              <div class="lab-qr-panel" aria-label="Room QR Code">
+                <div id="labQrSvg" class="qr-box"></div>
+                <small id="labQrHint" class="mono-stat">Scan to join</small>
               </div>
             </div>
-            <p class="muted">
-              Onset labels are relative timestamps. This map does not locate a
-              wave source.
+            <div id="layoutTransformControls" class="layout-tools" hidden>
+              <button id="rotateLayout" class="secondary">Rotate 90°</button>
+              <button id="mirrorLayout" class="secondary">Mirror X</button>
+              <button id="resetLayout" class="secondary">Schematic</button>
+            </div>
+            <p class="muted" id="layoutFootnote">
+              Schematic sensor field — no manual placement required. Onset labels
+              show relative trigger order.
             </p>
           </section>
           <section class="card traces">
@@ -333,7 +411,7 @@
                 <span class="empty-symbol">∿</span
                 ><b>A quiet room is a good start.</b>
                 <p>
-                  Join a phone and enable motion,<br />or start four virtual
+                  Join phones via QR and lay flat,<br />or start four virtual
                   sensors below.
                 </p>
               </div>
@@ -387,9 +465,27 @@
                 /></label>
               </div>
               <p class="muted">
-                At least two sensors must trigger in the selected window. Higher
-                thresholds reject more noise.
+                Two distinct ready sensors must confirm within the selected
+                window. Isolated bumps stay silent.
               </p>
+            </details>
+            <details class="tuning">
+              <summary>
+                Acoustic layout experiment <span>OPTIONAL P3</span>
+              </summary>
+              <div class="acoustic-exp">
+                <p class="muted">
+                  Opt-in phones play short 2–6 kHz chirps to test BeepBeep
+                  relative spacing. Updates layout only when residual error &le;
+                  15 cm.
+                </p>
+                <div class="acoustic-exp-row">
+                  <button id="runAcoustics" class="secondary">
+                    Run chirp calibration
+                  </button>
+                  <span id="acousticStatus" class="mono-stat">Idle (schematic)</span>
+                </div>
+              </div>
             </details>
           </section>
           <section class="card timeline">
@@ -404,8 +500,8 @@
               <div class="empty">
                 <b>Listening for a shared moment.</b>
                 <p>
-                  One sensor is a movement.<br />Two together may be a shared
-                  impact.
+                  One sensor is an isolated bump.<br />Two ready sensors
+                  together trigger one event.
                 </p>
               </div>
             </div>
@@ -414,12 +510,68 @@
         <div class="method-note">
           <b>READ THE SIGNAL, NOT A PREDICTION.</b
           ><span
-            >Magnitude → 300 ms detrend → rolling noise → threshold →
-            multi-sensor coincidence. Browser and network timing vary; no hard
-            10 ms end-to-end guarantee.</span
+            >Magnitude → detrend → rolling noise / ringing gate → threshold →
+            multi-sensor quorum. Transport clock uncertainty is separate from
+            physical tap-to-sound latency.</span
           >
         </div>
       </div>
+
+      <!-- Fullscreen Projector Performance Stage -->
+      <section id="projector" class="projector-stage" hidden aria-label="Projector performance stage">
+        <div class="proj-hud">
+          <div class="proj-hud-left">
+            <span class="proj-brand">RoomQuake</span>
+            <span class="proj-pill">ROOM <strong id="projCode">—</strong></span>
+            <span class="proj-pill" id="projSensors">00 ready</span>
+            <span class="proj-pill" id="projLayoutBadge">SCHEMATIC LAYOUT</span>
+            <span class="proj-pill" id="projProfileBadge">PERFORMANCE</span>
+          </div>
+          <div class="proj-hud-center" id="projInstrumentHud">
+            <span id="projCueText">Free Play · Soft Strings</span>
+            <div class="proj-cue-track">
+              <div id="projCueFill" class="proj-cue-fill" style="width:0%"></div>
+            </div>
+          </div>
+          <div class="proj-hud-right">
+            <span class="proj-health" id="projHealth">p95 — · Net — · Clock —</span>
+            <button id="projAudioBtn" class="proj-btn">Enable Audio</button>
+            <button id="projAssistReset" class="proj-btn" hidden>Reset Cue</button>
+            <button id="projQrToggle" class="proj-btn">QR Join</button>
+            <button id="projFullscreen" class="proj-btn">Fullscreen</button>
+            <button id="closeProjector" class="proj-btn">Lab View</button>
+          </div>
+        </div>
+
+        <div class="proj-canvas-wrap">
+          <canvas id="projectorCanvas"></canvas>
+
+          <div id="projQrCard" class="proj-qr-card">
+            <div class="proj-qr-main">
+              <div id="projQrSvg" class="proj-qr-svg"></div>
+              <div class="proj-qr-info">
+                <span class="eyebrow">SCAN TO JOIN TABLETOP ARRAY</span>
+                <div class="proj-big-code" id="projQrCode">—</div>
+                <p id="projQrUrl" class="proj-url"></p>
+                <p id="projQrWarning" class="proj-warn" hidden></p>
+                <div class="proj-lobby-sensors" id="projLobbySensors"></div>
+                <div class="proj-qr-actions">
+                  <button id="projHideQr">Hide QR · Full Stage →</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="proj-traces-wrap">
+          <div class="proj-traces-head">
+            <span>ALIGNED ACCELEROMETER TRACES · ±1.5 m/s² · 3 SEC WINDOW</span>
+            <span id="projSimBadge" class="proj-sim-badge" hidden>SIMULATION</span>
+          </div>
+          <canvas id="projectorTraces"></canvas>
+        </div>
+      </section>
+
       <aside class="safety">
         <span>EDUCATIONAL PROTOTYPE</span>
         <p>
