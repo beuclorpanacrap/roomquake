@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: roomquake
+    runtime: node
+    region: frankfurt
+    plan: free
+    buildCommand: npm ci && npm run build
+    startCommand: node dist/server.js
+    healthCheckPath: /
+    maxShutdownDelaySeconds: 30
+    envVars:
+      - key: NODE_ENV
+        value: production

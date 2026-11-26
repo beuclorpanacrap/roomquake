@@ -1,6 +1,7 @@
 import http from "node:http";
 import https from "node:https";
 import fs from "node:fs";
+import net from "node:net";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { WebSocketServer, WebSocket } from "ws";
@@ -21,15 +22,140 @@ const ALLOWED_LIB = new Set([
   "/lib/acoustics.js",
 ]);
 
-export function createApp({ tls } = {}) {
+const SECURITY_HEADERS = {
+  "Content-Security-Policy": [
+    "default-src 'self'",
+    "base-uri 'none'",
+    "connect-src 'self'",
+    "font-src 'self'",
+    "form-action 'self'",
+    "frame-ancestors 'none'",
+    "img-src 'self' data:",
+    "media-src 'self' blob:",
+    "object-src 'none'",
+    "script-src 'self'",
+    "style-src 'self'",
+    "style-src-attr 'unsafe-inline'",
+    "worker-src 'self' blob:",
+  ].join("; "),
+  "Cross-Origin-Resource-Policy": "same-origin",
+  "Permissions-Policy":
+    "accelerometer=(self), camera=(), geolocation=(), gyroscope=(self), magnetometer=(), microphone=(self)",
+  "Referrer-Policy": "no-referrer",
+  "X-Content-Type-Options": "nosniff",
+  "X-Frame-Options": "DENY",
+};
+
+function requestIp(req) {
+  const forwarded = String(req.headers["x-forwarded-for"] || "")
+    .split(",")[0]
+    .trim();
+  return net.isIP(forwarded)
+    ? forwarded
+    : String(req.socket?.remoteAddress || "unknown");
+}
+
+function requestOrigin(req) {
+  const forwardedHost = String(req.headers["x-forwarded-host"] || "")
+    .split(",")[0]
+    .trim();
+  const host = forwardedHost || String(req.headers.host || "").trim();
+  const forwardedProto = String(req.headers["x-forwarded-proto"] || "")
+    .split(",")[0]
+    .trim();
+  const protocol = forwardedProto || (req.socket?.encrypted ? "https" : "http");
+  return host ? `${protocol}://${host}` : "";
+}
+
+function normalizeOrigin(value) {
+  try {
+    return new URL(value).origin;
+  } catch {
+    return "";
+  }
+}
+
+function setSecurityHeaders(req, res) {
+  for (const [name, value] of Object.entries(SECURITY_HEADERS))
+    res.setHeader(name, value);
+  if (
+    req.socket?.encrypted ||
+    String(req.headers["x-forwarded-proto"] || "").split(",")[0].trim() ===
+      "https"
+  )
+    res.setHeader(
+      "Strict-Transport-Security",
+      "max-age=31536000; includeSubDomains",
+    );
+}
+
+function createRateGate(maxEntries = 5000) {
+  const buckets = new Map();
+  return {
+    allow(key, limit, windowMs, now = Date.now()) {
+      let bucket = buckets.get(key);
+      if (!bucket || now >= bucket.resetAt) {
+        bucket = { count: 0, resetAt: now + windowMs };
+        buckets.set(key, bucket);
+      }
+      bucket.count++;
+      if (buckets.size > maxEntries) {
+        for (const [entryKey, entry] of buckets) {
+          if (now >= entry.resetAt) buckets.delete(entryKey);
+          if (buckets.size <= maxEntries) break;
+        }
+      }
+      return bucket.count <= limit;
+    },
+    clear() {
+      buckets.clear();
+    },
+  };
+}
+
+export function createApp({
+  tls,
+  enforceOrigin = process.env.NODE_ENV === "production",
+  allowedOrigins = process.env.ALLOWED_ORIGINS || "",
+} = {}) {
   const rooms = new Map();
+  const rateGate = createRateGate();
+  const explicitOrigins = new Set(
+    String(allowedOrigins)
+      .split(",")
+      .map((origin) => normalizeOrigin(origin.trim()))
+      .filter(Boolean),
+  );
+  const originAllowed = (req) => {
+    const origin = normalizeOrigin(req.headers.origin);
+    if (!origin) return !enforceOrigin;
+    return origin === requestOrigin(req) || explicitOrigins.has(origin);
+  };
   const handler = (req, res) => {
+    setSecurityHeaders(req, res);
+    const ip = requestIp(req);
+    if (!rateGate.allow(`http:${ip}`, 180, 60_000)) {
+      res.writeHead(429, { "Retry-After": "60" }).end("Too many requests");
+      return;
+    }
+    if (!['GET', 'HEAD'].includes(req.method || "")) {
+      res.writeHead(405, { Allow: "GET, HEAD" }).end("Method not allowed");
+      return;
+    }
+    if (!req.url || req.url.length > 2048) {
+      res.writeHead(414).end("Request URL too long");
+      return;
+    }
     const reqUrl = new URL(req.url, "http://localhost");
     const pathname = reqUrl.pathname;
 
     if (pathname === "/qr.svg") {
+      if (!rateGate.allow(`qr:${ip}`, 30, 60_000)) {
+        res.writeHead(429, { "Retry-After": "60" }).end("Too many requests");
+        return;
+      }
       const text = reqUrl.searchParams.get("text") || "";
-      if (!text) {
+      if (!text || text.length > 1024) {
         res.writeHead(400).end("Missing text");
         return;
       }
@@ -41,7 +167,7 @@ export function createApp({ tls } = {}) {
             "Cache-Control": "no-store",
             "X-Content-Type-Options": "nosniff",
           })
-          .end(svg);
+          .end(req.method === "HEAD" ? undefined : svg);
       } catch (err) {
         res.writeHead(400).end(err.message);
       }
@@ -50,7 +176,10 @@ export function createApp({ tls } = {}) {
 
     const file = ALLOWED_LIB.has(pathname)
       ? path.join(root, pathname.slice(1))
-      : path.join(publicRoot, pathname === "/" ? "index.html" : pathname);
+      : path.resolve(
+          publicRoot,
+          `.${pathname === "/" ? "/index.html" : pathname}`,
+        );
     if (
       !file.startsWith(publicRoot + path.sep) &&
       !ALLOWED_LIB.has(pathname)
@@ -75,13 +204,42 @@ export function createApp({ tls } = {}) {
           "Cache-Control": "no-store",
           "X-Content-Type-Options": "nosniff",
         })
-        .end(data);
+        .end(req.method === "HEAD" ? undefined : data);
     });
   };
+  const serverOptions = {
+    maxHeaderSize: 16 * 1024,
+    requestTimeout: 10_000,
+    headersTimeout: 10_000,
+    keepAliveTimeout: 5_000,
+  };
   const server = tls
-    ? https.createServer(tls, handler)
-    : http.createServer(handler);
-  const wss = new WebSocketServer({ server, maxPayload: 24000 });
+    ? https.createServer({ ...serverOptions, ...tls }, handler)
+    : http.createServer(serverOptions, handler);
+  server.maxConnections = 200;
+  const wss = new WebSocketServer({
+    server,
+    maxPayload: 24000,
+    verifyClient(info, done) {
+      const ip = requestIp(info.req);
+      if (!originAllowed(info.req)) {
+        done(false, 403, "Origin not allowed");
+        return;
+      }
+      if (!rateGate.allow(`ws-connect:${ip}`, 30, 60_000)) {
+        done(false, 429, "Too many connections");
+        return;
+      }
+      const concurrent = [...wss.clients].filter(
+        (peer) => peer.clientIp === ip && peer.readyState !== WebSocket.CLOSED,
+      ).length;
+      if (concurrent >= 12) {
+        done(false, 429, "Too many connections");
+        return;
+      }
+      done(true);
+    },
+  });
   const send = sendBounded;
   const publish = (room, hydrate = false) => {
     const snapshot = room.snapshot({ points: hydrate });
@@ -256,7 +414,8 @@ export function createApp({ tls } = {}) {
     );
   };
 
-  wss.on("connection", (ws) => {
+  wss.on("connection", (ws, req) => {
+    ws.clientIp = requestIp(req);
     ws.cursors = new Map();
     ws.mode = "performance";
     ws.pendingEvents = [];
@@ -279,6 +438,8 @@ export function createApp({ tls } = {}) {
         }
         if (m.type === "create") {
           if (ws.room) throw Error("Already joined.");
+          if (!rateGate.allow(`create:${ws.clientIp}`, 6, 10 * 60_000))
+            throw Error("Too many rooms created. Try again later.");
           if (rooms.size >= 50) throw Error("Server room limit reached.");
           let code;
           do {
@@ -311,6 +472,8 @@ export function createApp({ tls } = {}) {
         }
         if (m.type === "join") {
           if (ws.room) throw Error("Already joined.");
+          if (!rateGate.allow(`join:${ws.clientIp}`, 40, 60_000))
+            throw Error("Too many join attempts. Try again later.");
           const room = rooms.get(String(m.code).toUpperCase());
           if (!room)
             throw Error("Room not found. Create a new room on the host.");
@@ -614,6 +777,7 @@ export function createApp({ tls } = {}) {
       }
       for (const ws of wss.clients) ws.terminate();
       wss.close();
+      rateGate.clear();
       return new Promise((resolve) => server.close(resolve));
     },
   };
