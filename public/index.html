@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <meta name="theme-color" content="#eeeee7" />
+    <meta name="theme-color" content="#7414ff" />
     <title>RoomQuake — The room is an instrument.</title>
     <link rel="icon" href="/icon.svg" type="image/svg+xml" />
     <link rel="stylesheet" href="/style.css" />
@@ -16,8 +16,7 @@
         ><b>RoomQuake<span>COLLECTIVE SENSING LAB &amp; INSTRUMENT</span></b></a
       >
       <div class="header-right">
-        <span class="edition">EXPERIMENT NO. 001</span
-        ><span id="connection" class="badge">Connecting…</span>
+        <span id="connection" class="badge">Connecting…</span>
       </div>
     </header>
     <main>
@@ -25,27 +24,18 @@
       <section id="landing">
         <div class="hero">
           <div>
-            <div class="eyebrow">SMALL VIBRATIONS. SHARED DISCOVERIES.</div>
-            <h1>The room is<br />an <em>instrument.</em></h1>
+            <div class="eyebrow">LIVE MULTI-PHONE INSTRUMENT</div>
+            <h1>MAKE THE ROOM<br /><em>COME ALIVE.</em></h1>
             <p class="lead">
-              A few phones. One shared surface.<br />See and play the
-              vibrations you usually only feel.
+              Connect phones. Tap the table. Watch and hear one shared vibration.
             </p>
-            <nav class="role-shortcuts" aria-label="Choose a role">
-              <a href="#host-entry">Host stage &amp; lab ↗</a
-              ><a href="#sensor-entry">Join with a phone →</a>
-            </nav>
-            <div class="hero-caption">
-              <span class="cross">+</span> A live, local-first multi-phone
-              seismometer &amp; tabletop instrument.
-            </div>
           </div>
           <div
             class="hero-instrument"
             aria-label="Illustration of four sensors observing one impact"
           >
             <div class="instrument-heading">
-              <span>ARRAY / 04 NODES</span><span>ILLUSTRATION</span>
+              <span>ROOMQUAKE LIVE</span><span>4 PHONE ARRAY</span>
             </div>
             <svg
               viewBox="0 0 480 280"
@@ -93,78 +83,68 @@
               </g>
             </svg>
             <div class="instrument-footer">
-              <span>ONE IMPACT. MULTIPLE PERSPECTIVES.</span><span>m/s²</span>
+              <span>ONE TAP. ONE SHARED WAVE.</span><span>m/s²</span>
             </div>
           </div>
         </div>
         <div class="role-heading">
-          <span class="eyebrow">01 / CHOOSE YOUR ROLE</span
-          ><span>Open the projector/lab on a laptop. Scan QR on phones.</span>
+          <span class="eyebrow">START HERE</span>
         </div>
         <div class="roles">
           <section id="host-entry" class="role-card host-role">
-            <div class="role-number">A / CONTROL DESK &amp; STAGE</div>
-            <h2>Host the experiment</h2>
+            <div class="role-number">HOST</div>
+            <h2>Run RoomQuake</h2>
             <p>
-              Launch the projector wavefield, audio resonator, and seismometer
-              lab on this laptop. Invite nearby phones via QR.
+              Create the room on this computer. Phones join by QR.
             </p>
-            <ol class="steps">
-              <li><span>1</span>Create an ephemeral room</li>
-              <li><span>2</span>Scan the QR code with phones</li>
-              <li><span>3</span>Lay phones flat. Tap the table to play.</li>
-            </ol>
             <div class="role-actions">
-              <button id="create">Create a room <span>↗</span></button
-              ><span>No account.<br />No installation.</span>
+              <button id="create">CREATE A ROOM</button>
             </div>
           </section>
           <section id="sensor-entry" class="role-card joinbox">
-            <div class="role-number">B / MOBILE SENSOR</div>
-            <h2>Bring your phone</h2>
+            <div class="role-number">PHONE</div>
+            <h2>Join the room</h2>
             <p>
-              Already have a host? Confirm the room code, tap Join &amp; Enable
-              Motion, then lay your phone flat on the table.
+              Enter the host code, enable motion, then lay your phone flat.
             </p>
             <div class="join-fields">
-              <label
-                >Room code<input
+              <label>
+                <span class="field-label">Room code</span>
+                <input
                   id="code"
                   maxlength="6"
                   placeholder="ABC123"
                   autocomplete="off"
                   autocapitalize="characters"
-                  spellcheck="false" /></label
-              ><label
-                >Sensor name <span>optional</span
-                ><input
+                  spellcheck="false" />
+              </label>
+              <label>
+                <span class="field-label">Sensor name <small>optional</small></span>
+                <input
                   id="name"
                   maxlength="32"
                   placeholder="e.g. Left corner"
-              /></label>
+                />
+              </label>
             </div>
             <button id="join" class="secondary">
-              Join &amp; Enable Motion <span>→</span>
+              JOIN &amp; ENABLE MOTION
             </button>
-            <div class="consent-note">
-              ◎ Motion starts only after your permission tap. No placement grid
-              needed; microphone is separate &amp; optional.
-            </div>
           </section>
         </div>
-        <details class="preflight" open>
-          <summary>Before you begin <span>PRE-FLIGHT CHECKLIST</span></summary>
+        <details class="preflight">
+          <summary>Setup notes</summary>
           <div class="checklist">
             <p>
-              <b>01 / Trusted HTTPS</b>Connect host and phones to the same
+              <b>Trusted HTTPS</b>Connect host and phones to the same
               trusted Wi-Fi using local trusted HTTPS (`mkcert`) or a tunnel fallback.
             </p>
             <p>
-              <b>02 / Lay phones flat</b>Place each phone flat on one rigid
+              <b>Lay phones flat</b>Place each phone flat on one rigid
               tabletop. Wait ~1 s for automatic calibration until Ready turns green.
             </p>
             <p>
-              <b>03 / Gentle taps</b>Tap the table surface gently. Keep phone
+              <b>Gentle taps</b>Tap the table surface gently. Keep phone
               screens visible. Single-phone bumps stay silent.
             </p>
           </div>
@@ -195,7 +175,7 @@
               <div id="phoneCalProgress" class="cal-progress-fill" style="width:0%"></div>
             </div>
             <div class="phone-actions">
-              <button id="enable">Enable motion →</button
+              <button id="enable">Enable motion</button
               ><button id="stop" class="secondary" disabled>
                 Stop sensing
               </button>
@@ -233,7 +213,7 @@
       <div id="dashboard" hidden>
         <section class="roomline">
           <div>
-            <div class="eyebrow">CONTROL DESK / LIVE EXPERIMENT</div>
+            <div class="eyebrow">LIVE ROOM</div>
             <h1>
               Room <span id="roomCode">—</span
               ><span class="room-marker">●</span>
@@ -242,13 +222,11 @@
           </div>
           <div class="joinlink">
             <div class="roomline-actions">
-              <button id="openProjector">Projector Stage ↗</button>
+              <button id="openProjector">OPEN PROJECTOR</button>
               <button id="copy" class="secondary">Copy join link</button>
             </div>
             <small id="joinHint"
               >Open this address on phones using trusted HTTPS.</small
-            ><a class="demo-shortcut" href="#experiment-controls"
-              >No phones? Try the virtual array ↓</a
             >
           </div>
         </section>
@@ -259,7 +237,6 @@
               <span class="health-label">AUDIO ENGINE</span>
               <div class="toolbar-inline">
                 <button id="unlockAudio">Enable Audio</button>
-                <span id="audioStateBadge" class="badge">AUDIO LOCKED</span>
               </div>
             </div>
             <label class="toolbar-group"
@@ -308,7 +285,7 @@
               <span id="assistCount" class="mono-stat">00 / 28</span>
             </div>
             <div class="assist-actions">
-              <button id="assistBack" class="secondary">← Step</button>
+              <button id="assistBack" class="secondary">Previous step</button>
               <button id="assistReset" class="secondary">Reset Cue</button>
               <label class="file-pill"
                 ><span>Import MIDI</span>
@@ -353,7 +330,7 @@
           <section class="card mapcard">
             <div class="cardhead">
               <div>
-                <span class="eyebrow">01 / ARRAY TOPOLOGY &amp; QR</span>
+                <span class="eyebrow">ARRAY &amp; QR</span>
                 <h2>Sensor array</h2>
               </div>
               <span class="badge" id="arrayHealth">AWAITING SENSORS</span>
@@ -397,7 +374,7 @@
           <section class="card traces">
             <div class="cardhead">
               <div>
-                <span class="eyebrow">02 / COMMON TIMEBASE</span>
+                <span class="eyebrow">LIVE SIGNAL</span>
                 <h2>Live waveforms</h2>
               </div>
               <span class="live">● STREAMING</span>
@@ -424,7 +401,7 @@
           <section id="experiment-controls" class="card controls">
             <div class="cardhead">
               <div>
-                <span class="eyebrow">03 / EXPERIMENT BENCH</span>
+                <span class="eyebrow">TEST CONTROLS</span>
                 <h2>Introduce a signal</h2>
               </div>
               <span class="bench-mark">⌁</span>
@@ -491,7 +468,7 @@
           <section class="card timeline">
             <div class="cardhead">
               <div>
-                <span class="eyebrow">04 / COINCIDENT SIGNALS</span>
+                <span class="eyebrow">SHARED EVENTS</span>
                 <h2>Shared events <span id="eventCount">00</span></h2>
               </div>
               <span class="badge">LATEST 40</span>
@@ -506,14 +483,6 @@
               </div>
             </div>
           </section>
-        </div>
-        <div class="method-note">
-          <b>READ THE SIGNAL, NOT A PREDICTION.</b
-          ><span
-            >Magnitude → detrend → rolling noise / ringing gate → threshold →
-            multi-sensor quorum. Transport clock uncertainty is separate from
-            physical tap-to-sound latency.</span
-          >
         </div>
       </div>
 
@@ -556,7 +525,7 @@
                 <p id="projQrWarning" class="proj-warn" hidden></p>
                 <div class="proj-lobby-sensors" id="projLobbySensors"></div>
                 <div class="proj-qr-actions">
-                  <button id="projHideQr">Hide QR · Full Stage →</button>
+                  <button id="projHideQr">HIDE QR · FULL STAGE</button>
                 </div>
               </div>
             </div>
@@ -572,18 +541,6 @@
         </div>
       </section>
 
-      <aside class="safety">
-        <span>EDUCATIONAL PROTOTYPE</span>
-        <p>
-          Not an earthquake-warning or structural-safety instrument. Session
-          data stays in memory and is visible to room participants.
-        </p>
-        <b>NO ACCOUNTS · NO RAW DATA SAVED</b>
-      </aside>
-      <footer>
-        <span>RQ / FIELD LAB SERIES — 001</span
-        ><span>Small signals. Shared curiosity.</span>
-      </footer>
     </main>
     <script type="module" src="/app.js"></script>
   </body>

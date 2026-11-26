@@ -575,6 +575,7 @@ function showRoom() {
   if ($("projCode")) $("projCode").textContent = code;
   if ($("phoneTitle")) $("phoneTitle").textContent = `Sensor in room ${code}`;
   notice("");
+  window.scrollTo?.({ top: 0, behavior: "instant" });
   updateAudioUi();
   updateAssistUi();
 }
@@ -966,7 +967,7 @@ function stopMotion(
   clearTimeout(noMotionTimer);
   if ($("enable")) {
     $("enable").disabled = false;
-    $("enable").textContent = "Enable motion →";
+    $("enable").textContent = "Enable motion";
   }
   if ($("stop")) $("stop").disabled = true;
   if ($("sensorStatus")) $("sensorStatus").textContent = message;
@@ -1299,8 +1300,7 @@ if (requested) {
   document.body?.classList?.add?.("compact-hero");
   const roleHeading = document.querySelector?.(".role-heading");
   if (roleHeading) {
-    roleHeading.textContent =
-      "JOIN THE ARRAY / Tap Join & Enable Motion, then lay your phone flat.";
+    roleHeading.hidden = true;
   }
   $("code").focus?.();
 }
