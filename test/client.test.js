@@ -92,6 +92,10 @@ function createHarness({ audioMock = false } = {}) {
   }
 
   class TrackedSynth extends RoomQuakeSynth {
+    constructor(...args) {
+      super(...args);
+      this.trackLoaded = true;
+    }
     unlock() {
       synthCalls.push({ type: "unlock" });
       return Promise.resolve(true);
@@ -109,7 +113,10 @@ function createHarness({ audioMock = false } = {}) {
     }
     playPrankCue(opts) {
       synthCalls.push({ type: "prank", opts });
-      return { cue: "surprise", durationSec: 1.9 };
+      return { cue: "local-track", durationSec: 2.4 };
+    }
+    hasPrankTrack() {
+      return this.trackLoaded;
     }
   }
 

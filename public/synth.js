@@ -53,6 +53,9 @@ export class RoomQuakeSynth {
     this.compressor = null;
     this.masterGainNode = null;
     this._noiseBuffer = null;
+    this.prankBuffer = null;
+    this.prankSource = null;
+    this.prankTrackName = "";
 
     this.masterGainValue = clamp(masterGain, 0, 1.5);
     this.reverbMixValue = clamp(reverbMix, 0, 1);
@@ -132,6 +135,7 @@ export class RoomQuakeSynth {
    */
   stopAll() {
     if (!this.ctx) return;
+    this.stopPrankTrack();
     const now = this.ctx.currentTime;
     while (this.activeVoices.length > 0) {
       const voice = this.activeVoices.shift();
@@ -203,40 +207,79 @@ export class RoomQuakeSynth {
     };
   }
 
-  /**
-   * Plays one short, original bait-and-switch jingle for a shared impact.
-   * The cue is synthesized locally and intentionally does not reproduce or
-   * download any commercial recording.
-   */
+  hasPrankTrack() {
+    return Boolean(this.prankBuffer);
+  }
+
+  async loadPrankTrack(file) {
+    if (!file || typeof file.arrayBuffer !== "function")
+      throw Error("Choose an MP3 file.");
+    if (Number(file.size) > 20 * 1024 * 1024)
+      throw Error("Choose an MP3 smaller than 20 MB.");
+    if (file.type && file.type !== "audio/mpeg")
+      throw Error("Choose an MP3 file.");
+    if (!(await this.unlock()) || !this.ctx)
+      throw Error("Audio is unavailable in this browser.");
+
+    const bytes = await file.arrayBuffer();
+    const decoded = await this.ctx.decodeAudioData(bytes.slice(0));
+    if (!decoded || !Number.isFinite(decoded.duration) || decoded.duration <= 0)
+      throw Error("This MP3 could not be decoded.");
+
+    this.stopPrankTrack();
+    this.prankBuffer = decoded;
+    this.prankTrackName = String(file.name || "Local MP3").slice(0, 120);
+    return { name: this.prankTrackName, durationSec: decoded.duration };
+  }
+
+  stopPrankTrack() {
+    if (!this.prankSource) return;
+    const source = this.prankSource;
+    this.prankSource = null;
+    source.onended = null;
+    try {
+      source.stop();
+    } catch {}
+    try {
+      source.disconnect();
+    } catch {}
+  }
+
+  /** Starts the host-selected local recording once per shared-impact session. */
   playPrankCue({ intensity = 0.7, spacingMs = 600 } = {}) {
-    if (!this.ctx || this.ctx.state !== "running") return null;
+    if (
+      !this.ctx ||
+      this.ctx.state !== "running" ||
+      !this.prankBuffer
+    )
+      return null;
+    if (this.prankSource) {
+      return {
+        cue: "local-track",
+        alreadyPlaying: true,
+        intensity: clamp(intensity, 0, 1),
+        spacingMs: clamp(spacingMs, 60, 4000),
+        durationSec: 2.4,
+      };
+    }
 
-    const normIntensity = clamp(intensity, 0, 1);
-    const safeSpacing = clamp(spacingMs, 60, 4000);
-    const now = this.ctx.currentTime;
-    const notes = [62, 66, 69, 74, 71, 67, 64, 69];
-    const offsets = [0, 0.1, 0.2, 0.34, 0.48, 0.62, 0.78, 0.96];
-    const accent = 0.13 + normIntensity * 0.16;
-
-    this.stopAll();
-    notes.forEach((midi, index) => {
-      const gain = accent * (index === 0 || index === 7 ? 1 : 0.78);
-      this._spawnBellVoice(
-        midi,
-        now + offsets[index],
-        gain,
-        index === 7 ? 0.85 : 0.36,
-        1800 + normIntensity * 2200,
-        false,
-      );
-    });
-
+    const source = this.ctx.createBufferSource();
+    source.buffer = this.prankBuffer;
+    source.connect(this.compressor || this.masterGainNode || this.ctx.destination);
+    source.onended = () => {
+      if (this.prankSource === source) this.prankSource = null;
+      try {
+        source.disconnect();
+      } catch {}
+    };
+    this.prankSource = source;
+    source.start(this.ctx.currentTime);
     return {
-      cue: "surprise",
-      notes,
-      intensity: normIntensity,
-      spacingMs: safeSpacing,
-      durationSec: 1.9,
+      cue: "local-track",
+      alreadyPlaying: false,
+      intensity: clamp(intensity, 0, 1),
+      spacingMs: clamp(spacingMs, 60, 4000),
+      durationSec: 2.4,
     };
   }
 

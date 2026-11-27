@@ -185,7 +185,9 @@ function updateAssistUi() {
     $("assistProgressFill").style.width = pct;
   }
   if ($("projCueText")) {
-    $("projCueText").textContent = "Shared impact · Surprise cue";
+    $("projCueText").textContent = synth.hasPrankTrack?.()
+      ? "Shared impact · Rickroll armed"
+      : "Shared impact · Choose MP3 in Lab View";
   }
   if ($("projCueFill")?.style) {
     $("projCueFill").style.width = "100%";
@@ -680,6 +682,29 @@ if ($("unlockAudio")) {
 }
 if ($("projAudioBtn")) {
   $("projAudioBtn").onclick = () => ensureAudioUnlocked();
+}
+
+if ($("prankFile")) {
+  $("prankFile").onchange = async (ev) => {
+    const file = ev.target?.files?.[0];
+    if (!file) return;
+    const status = $("prankFileStatus");
+    if (status) status.textContent = "Loading locally…";
+    try {
+      const loaded = await synth.loadPrankTrack(file);
+      if ($("prankFileLabel")) $("prankFileLabel").textContent = "Rickroll armed";
+      if (status) {
+        const seconds = Math.round(loaded.durationSec || 0);
+        status.textContent = `Ready${seconds ? ` · ${seconds}s` : ""} · never uploaded`;
+      }
+      updateAudioUi();
+      updateAssistUi();
+      notice("Rickroll armed locally. Shared vibrations will start it.");
+    } catch (error) {
+      if (status) status.textContent = "Could not load this MP3";
+      notice(error?.message || "Could not load this MP3.");
+    }
+  };
 }
 
 if ($("instrumentMode")) {

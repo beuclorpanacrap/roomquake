@@ -225,11 +225,21 @@ function createMockAudioContext() {
         ...makeNode("bufferSource"),
         buffer: null,
         onended: null,
-        start() {},
-        stop() {},
+        startedAt: null,
+        stopped: false,
+        start(time) {
+          this.startedAt = time;
+        },
+        stop() {
+          this.stopped = true;
+        },
       };
       calls.nodes.push(node);
       return node;
+    }
+
+    decodeAudioData() {
+      return Promise.resolve({ duration: 213.5 });
     }
 
     createBuffer(channels, length, sampleRate) {
@@ -482,11 +492,21 @@ test("RoomQuakeSynth is Node-safe and unlocks, voices Free Play & Assist steps, 
     synth.setMasterGain(0.8);
     synth.setReverbMix(0.4);
 
+    assert.equal(synth.hasPrankTrack(), false);
+    const loaded = await synth.loadPrankTrack({
+      name: "demo.mp3",
+      type: "audio/mpeg",
+      size: 4,
+      arrayBuffer: async () => new ArrayBuffer(4),
+    });
+    assert.equal(loaded.durationSec, 213.5);
+    assert.equal(synth.hasPrankTrack(), true);
     const prank = synth.playPrankCue({ intensity: 0.8, spacingMs: 420 });
-    assert.equal(prank.cue, "surprise");
-    assert.equal(prank.notes.length, 8);
-    assert.equal(prank.durationSec, 1.9);
-    assert.ok(synth.activeVoices.length <= 18);
+    assert.equal(prank.cue, "local-track");
+    assert.equal(prank.alreadyPlaying, false);
+    assert.equal(prank.durationSec, 2.4);
+    const secondPrank = synth.playPrankCue({ intensity: 0.6, spacingMs: 500 });
+    assert.equal(secondPrank.alreadyPlaying, true);
 
     // Free Play voices use only FREE_PLAY_POOL pitches and adapt spread to spacingMs
     const poolSet = new Set(FREE_PLAY_POOL);
