@@ -226,9 +226,11 @@ function createMockAudioContext() {
         buffer: null,
         onended: null,
         startedAt: null,
+        offset: null,
         stopped: false,
-        start(time) {
+        start(time, offset = 0) {
           this.startedAt = time;
+          this.offset = offset;
         },
         stop() {
           this.stopped = true;
@@ -507,6 +509,14 @@ test("RoomQuakeSynth is Node-safe and unlocks, voices Free Play & Assist steps, 
     assert.equal(prank.durationSec, 2.4);
     const secondPrank = synth.playPrankCue({ intensity: 0.6, spacingMs: 500 });
     assert.equal(secondPrank.alreadyPlaying, true);
+    synth.ctx.currentTime = 4.25;
+    assert.equal(synth.pausePrankTrack(), true);
+    assert.equal(synth.prankOffsetSec, 3.25);
+    const resumed = synth.playPrankCue({ intensity: 0.7, spacingMs: 700 });
+    assert.equal(resumed.alreadyPlaying, false);
+    assert.equal(resumed.resumedAtSec, 3.25);
+    const latestSource = calls.nodes.filter((node) => node.kind === "bufferSource").at(-1);
+    assert.equal(latestSource.offset, 3.25);
 
     // Free Play voices use only FREE_PLAY_POOL pitches and adapt spread to spacingMs
     const poolSet = new Set(FREE_PLAY_POOL);

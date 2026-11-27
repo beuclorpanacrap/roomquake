@@ -115,6 +115,10 @@ function createHarness({ audioMock = false } = {}) {
       synthCalls.push({ type: "prank", opts });
       return { cue: "local-track", durationSec: 2.4 };
     }
+    pausePrankTrack() {
+      synthCalls.push({ type: "pause" });
+      return true;
+    }
     hasPrankTrack() {
       return this.trackLoaded;
     }

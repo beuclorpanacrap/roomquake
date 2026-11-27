@@ -51,11 +51,13 @@ let instrumentMode = "free",
   projectorOpen = false,
   qrPinned = null,
   lastHitAudioAt = 0,
+  prankQuietTimer = null,
   lastCalProgressAt = 0,
   parsedMidi = null;
 
 const playedEventIds = new Set();
 const PLAYED_EVENT_LIMIT = 200;
+const PRANK_QUIET_MS = 900;
 
 const tracker = createFlatStillTracker();
 const synth = new RoomQuakeSynth();
@@ -204,6 +206,14 @@ function triggerPerformanceOutput(event) {
 
   const res = synth.playPrankCue({ intensity, spacingMs });
   const decaySec = res?.durationSec || 2.4;
+  if (res) {
+    if (prankQuietTimer) clearTimeout(prankQuietTimer);
+    prankQuietTimer = setTimeout(() => {
+      synth.pausePrankTrack?.();
+      prankQuietTimer = null;
+    }, PRANK_QUIET_MS);
+    prankQuietTimer?.unref?.();
+  }
   projector.triggerRipple(event, decaySec);
 }
 
@@ -695,7 +705,7 @@ if ($("prankFile")) {
       if ($("prankFileLabel")) $("prankFileLabel").textContent = "Rickroll armed";
       if (status) {
         const seconds = Math.round(loaded.durationSec || 0);
-        status.textContent = `Ready${seconds ? ` · ${seconds}s` : ""} · never uploaded`;
+        status.textContent = `Ready${seconds ? ` · ${seconds}s` : ""} · local only · pauses when quiet`;
       }
       updateAudioUi();
       updateAssistUi();

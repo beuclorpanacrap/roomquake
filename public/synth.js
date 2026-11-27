@@ -56,6 +56,8 @@ export class RoomQuakeSynth {
     this.prankBuffer = null;
     this.prankSource = null;
     this.prankTrackName = "";
+    this.prankOffsetSec = 0;
+    this.prankStartedAt = 0;
 
     this.masterGainValue = clamp(masterGain, 0, 1.5);
     this.reverbMixValue = clamp(reverbMix, 0, 1);
@@ -232,7 +234,7 @@ export class RoomQuakeSynth {
     return { name: this.prankTrackName, durationSec: decoded.duration };
   }
 
-  stopPrankTrack() {
+  _releasePrankSource() {
     if (!this.prankSource) return;
     const source = this.prankSource;
     this.prankSource = null;
@@ -243,6 +245,21 @@ export class RoomQuakeSynth {
     try {
       source.disconnect();
     } catch {}
+  }
+
+  pausePrankTrack() {
+    if (!this.prankSource || !this.ctx || !this.prankBuffer) return false;
+    const elapsed = Math.max(0, this.ctx.currentTime - this.prankStartedAt);
+    this.prankOffsetSec =
+      (this.prankOffsetSec + elapsed) % this.prankBuffer.duration;
+    this._releasePrankSource();
+    return true;
+  }
+
+  stopPrankTrack() {
+    this._releasePrankSource();
+    this.prankOffsetSec = 0;
+    this.prankStartedAt = 0;
   }
 
   /** Starts the host-selected local recording once per shared-impact session. */
@@ -267,16 +284,22 @@ export class RoomQuakeSynth {
     source.buffer = this.prankBuffer;
     source.connect(this.compressor || this.masterGainNode || this.ctx.destination);
     source.onended = () => {
-      if (this.prankSource === source) this.prankSource = null;
+      if (this.prankSource === source) {
+        this.prankSource = null;
+        this.prankOffsetSec = 0;
+        this.prankStartedAt = 0;
+      }
       try {
         source.disconnect();
       } catch {}
     };
     this.prankSource = source;
-    source.start(this.ctx.currentTime);
+    this.prankStartedAt = this.ctx.currentTime;
+    source.start(this.ctx.currentTime, this.prankOffsetSec);
     return {
       cue: "local-track",
       alreadyPlaying: false,
+      resumedAtSec: this.prankOffsetSec,
       intensity: clamp(intensity, 0, 1),
       spacingMs: clamp(spacingMs, 60, 4000),
       durationSec: 2.4,
