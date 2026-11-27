@@ -107,6 +107,10 @@ function createHarness({ audioMock = false } = {}) {
       synthCalls.push({ type: "assist", step, intensity });
       return { layers: [step?.layer || "strings"] };
     }
+    playPrankCue(opts) {
+      synthCalls.push({ type: "prank", opts });
+      return { cue: "surprise", durationSec: 1.9 };
+    }
   }
 
   const window = {
@@ -301,7 +305,7 @@ test("browser flow renders host state, enforces one-button permission gating, an
   assert.equal(h.listeners.has("devicemotion"), false);
 });
 
-test("host plays live audio once, suppresses stale/simulated/duplicate events, and keeps event_update silent", () => {
+test("host plays the shared-impact cue once and suppresses stale, simulated, duplicate, and update audio", () => {
   const h = createHarness({ audioMock: true });
   const socket = h.getSocket();
   socket.onopen();
@@ -342,8 +346,6 @@ test("host plays live audio once, suppresses stale/simulated/duplicate events, a
     }),
   });
 
-  h.get("instrumentMode").value = "assist";
-  h.get("instrumentMode").onchange();
   h.synthCalls.length = 0;
 
   // 1. Replayed hydrated event must NOT sound
@@ -403,7 +405,7 @@ test("host plays live audio once, suppresses stale/simulated/duplicate events, a
   });
   assert.equal(h.synthCalls.length, 0);
 
-  // 4. Fresh live event plays Play Assist Step 1 ONCE
+  // 4. Fresh live event plays the surprise cue ONCE
   socket.onmessage({
     data: JSON.stringify({
       type: "event",
@@ -422,9 +424,8 @@ test("host plays live audio once, suppresses stale/simulated/duplicate events, a
     }),
   });
   assert.equal(h.synthCalls.length, 1);
-  assert.equal(h.synthCalls[0].type, "assist");
-  assert.equal(h.synthCalls[0].step.index, 0);
-  assert.equal(h.get("assistCount").textContent, "01 / 28");
+  assert.equal(h.synthCalls[0].type, "prank");
+  assert.equal(h.synthCalls[0].opts.intensity, 0.72);
 
   // 5. Duplicate live-1 or late event_update must NOT play sound or advance Assist
   socket.onmessage({
@@ -461,7 +462,6 @@ test("host plays live audio once, suppresses stale/simulated/duplicate events, a
     }),
   });
   assert.equal(h.synthCalls.length, 1);
-  assert.equal(h.get("assistCount").textContent, "01 / 28");
 
   // 6. Opening Projector switches lab profile -> performance automatically
   h.get("openProjector").onclick();

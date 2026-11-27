@@ -460,6 +460,7 @@ test("RoomQuakeSynth is Node-safe and unlocks, voices Free Play & Assist steps, 
   assert.equal(await nodeSynth.unlock(), false);
   assert.equal(nodeSynth.playFreeHit(), null);
   assert.equal(nodeSynth.playAssistStep(ASHEN_CATHEDRAL_CUE.steps[0]), null);
+  assert.equal(nodeSynth.playPrankCue(), null);
 
   const { MockAudioContext, calls } = createMockAudioContext();
   const prevAudioContext = globalThis.AudioContext;
@@ -480,6 +481,12 @@ test("RoomQuakeSynth is Node-safe and unlocks, voices Free Play & Assist steps, 
 
     synth.setMasterGain(0.8);
     synth.setReverbMix(0.4);
+
+    const prank = synth.playPrankCue({ intensity: 0.8, spacingMs: 420 });
+    assert.equal(prank.cue, "surprise");
+    assert.equal(prank.notes.length, 8);
+    assert.equal(prank.durationSec, 1.9);
+    assert.ok(synth.activeVoices.length <= 18);
 
     // Free Play voices use only FREE_PLAY_POOL pitches and adapt spread to spacingMs
     const poolSet = new Set(FREE_PLAY_POOL);

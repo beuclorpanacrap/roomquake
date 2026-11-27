@@ -204,6 +204,43 @@ export class RoomQuakeSynth {
   }
 
   /**
+   * Plays one short, original bait-and-switch jingle for a shared impact.
+   * The cue is synthesized locally and intentionally does not reproduce or
+   * download any commercial recording.
+   */
+  playPrankCue({ intensity = 0.7, spacingMs = 600 } = {}) {
+    if (!this.ctx || this.ctx.state !== "running") return null;
+
+    const normIntensity = clamp(intensity, 0, 1);
+    const safeSpacing = clamp(spacingMs, 60, 4000);
+    const now = this.ctx.currentTime;
+    const notes = [62, 66, 69, 74, 71, 67, 64, 69];
+    const offsets = [0, 0.1, 0.2, 0.34, 0.48, 0.62, 0.78, 0.96];
+    const accent = 0.13 + normIntensity * 0.16;
+
+    this.stopAll();
+    notes.forEach((midi, index) => {
+      const gain = accent * (index === 0 || index === 7 ? 1 : 0.78);
+      this._spawnBellVoice(
+        midi,
+        now + offsets[index],
+        gain,
+        index === 7 ? 0.85 : 0.36,
+        1800 + normIntensity * 2200,
+        false,
+      );
+    });
+
+    return {
+      cue: "surprise",
+      notes,
+      intensity: normIntensity,
+      spacingMs: safeSpacing,
+      durationSec: 1.9,
+    };
+  }
+
+  /**
    * Renders an arranged Play Assist step with distinct orchestral timbres per layer.
    */
   playAssistStep(step, intensity = 0.7) {

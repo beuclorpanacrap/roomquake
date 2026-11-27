@@ -248,53 +248,16 @@
                 </option>
               </select></label
             >
-            <label class="toolbar-group"
-              ><span class="health-label">INSTRUMENT MODE</span>
-              <select id="instrumentMode">
-                <option value="free">Free Play · Resonator</option>
-                <option value="assist">Play Assist · Orchestral Cue</option>
-              </select></label
-            >
-            <label class="toolbar-group" id="freeVoiceWrap"
-              ><span class="health-label">RESONATOR VOICE</span>
-              <select id="freeVoice">
-                <option value="strings">Soft Strings</option>
-                <option value="bells">Glassy Bells</option>
-                <option value="harp">Resonant Harp</option>
-              </select></label
-            >
+            <div class="toolbar-group">
+              <span class="health-label">SHARED IMPACT SOUND</span>
+              <div class="toolbar-inline"><strong>Surprise synth cue</strong></div>
+            </div>
             <div class="toolbar-group toolbar-check">
               <span class="health-label">SAFETY GATE</span>
               <label class="checkbox-label"
                 ><input type="checkbox" id="auditionSim" />
                 <span>Audition simulation audio</span></label
               >
-            </div>
-          </div>
-
-          <div id="assistBar" class="assist-bar" hidden>
-            <div class="assist-meta">
-              <span class="eyebrow" id="assistSection">I. EMBER</span>
-              <b id="assistTitle">Ashen Cathedral (Original Cue)</b>
-              <span id="assistLabel" class="muted">Tap table to cue Step 1</span>
-            </div>
-            <div class="assist-progress-wrap">
-              <div class="assist-progress-track">
-                <div id="assistProgressFill" class="assist-progress-fill" style="width:0%"></div>
-              </div>
-              <span id="assistCount" class="mono-stat">00 / 28</span>
-            </div>
-            <div class="assist-actions">
-              <button id="assistBack" class="secondary">Previous step</button>
-              <button id="assistReset" class="secondary">Reset Cue</button>
-              <label class="file-pill"
-                ><span>Import MIDI</span>
-                <input id="midiFile" type="file" accept=".mid,.midi" hidden
-              /></label>
-              <select id="midiTrack" hidden aria-label="MIDI track"></select>
-              <button id="useBuiltinCue" class="secondary" hidden>
-                Ashen Cathedral
-              </button>
             </div>
           </div>
         </section>
@@ -497,9 +460,9 @@
             <span class="proj-pill" id="projProfileBadge">PERFORMANCE</span>
           </div>
           <div class="proj-hud-center" id="projInstrumentHud">
-            <span id="projCueText">Free Play · Soft Strings</span>
+            <span id="projCueText">Shared impact · Surprise cue</span>
             <div class="proj-cue-track">
-              <div id="projCueFill" class="proj-cue-fill" style="width:0%"></div>
+              <div id="projCueFill" class="proj-cue-fill" style="width:100%"></div>
             </div>
           </div>
           <div class="proj-hud-right">

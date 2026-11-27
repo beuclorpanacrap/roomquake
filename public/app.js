@@ -185,23 +185,10 @@ function updateAssistUi() {
     $("assistProgressFill").style.width = pct;
   }
   if ($("projCueText")) {
-    if (instrumentMode === "assist") {
-      const label = st.currentStep
-        ? `${st.currentStep.section} · ${st.currentStep.label}`
-        : `Ready · ${st.nextStep?.label || st.title}`;
-      $("projCueText").textContent = `${label} [${st.index}/${st.total}]`;
-    } else {
-      const voiceLabel =
-        freeVoice === "bells"
-          ? "Glassy Bells"
-          : freeVoice === "harp"
-            ? "Resonant Harp"
-            : "Soft Strings";
-      $("projCueText").textContent = `Free Play · ${voiceLabel}`;
-    }
+    $("projCueText").textContent = "Shared impact · Surprise cue";
   }
   if ($("projCueFill")?.style) {
-    $("projCueFill").style.width = instrumentMode === "assist" ? pct : "100%";
+    $("projCueFill").style.width = "100%";
   }
 }
 
@@ -213,16 +200,8 @@ function triggerPerformanceOutput(event) {
     ? event.intensity
     : Math.min(1, Math.max(0.08, ((event.peak || 1) - 0.16) / 2.5));
 
-  let decaySec = 2.4;
-  if (instrumentMode === "assist") {
-    const adv = assist.advance(intensity);
-    synth.playAssistStep(adv.step, intensity);
-    decaySec = Math.max(1.2, adv.step?.durationSec || 2.0);
-    updateAssistUi();
-  } else {
-    const res = synth.playFreeHit({ intensity, spacingMs, voice: freeVoice });
-    decaySec = res?.releaseSec || 2.4;
-  }
+  const res = synth.playPrankCue({ intensity, spacingMs });
+  const decaySec = res?.durationSec || 2.4;
   projector.triggerRipple(event, decaySec);
 }
 
